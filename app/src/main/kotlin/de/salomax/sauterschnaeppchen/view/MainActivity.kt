@@ -2,13 +2,11 @@ package de.salomax.sauterschnaeppchen.view
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.Color
 import android.graphics.drawable.InsetDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -16,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import de.salomax.sauterschnaeppchen.R
-import de.salomax.sauterschnaeppchen.model.Item
+import de.salomax.sauterschnaeppchen.data.Item
 import de.salomax.sauterschnaeppchen.viewmodel.ItemViewModel
 import me.zhanghai.android.fastscroll.FastScrollerBuilder
 
@@ -47,22 +45,25 @@ class MainActivity : AppCompatActivity() {
 
         // data
         val model = ViewModelProviders.of(this).get(ItemViewModel::class.java)
-        model.liveData.observe(this, Observer<Array<Item>> {
+        // items
+        model.getItems().observe(this, Observer<Array<Item>> {
             swipeRefresh.isRefreshing = false
             errorView.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
             (recyclerView.adapter as MyAdapter).setData(it)
         })
-        model.liveError.observe(this, Observer<String> {
-            recyclerView.visibility = View.GONE
-            errorView.apply {
+        // error
+        model.getError().observe(this, Observer {
+            if (!it.isNullOrBlank()) {
                 swipeRefresh.isRefreshing = false
-                visibility = View.VISIBLE
-                text = it
+                recyclerView.visibility = View.GONE
+                errorView.apply {
+                    swipeRefresh.isRefreshing = false
+                    visibility = View.VISIBLE
+                    text = it
+                }
             }
         })
-        model.loadItems()
-//        model.loadItems(resources.assets.open("secondhand-liste-20200211.pdf"))
         swipeRefresh.isRefreshing = true
 
         // swipe2refresh
@@ -71,7 +72,7 @@ class MainActivity : AppCompatActivity() {
                 getColor(R.color.colorPrimary),
                 getColor(R.color.colorAccent)
             )
-            setOnRefreshListener { model.loadItems() }
+            setOnRefreshListener { model.refreshItems() }
         }
     }
 

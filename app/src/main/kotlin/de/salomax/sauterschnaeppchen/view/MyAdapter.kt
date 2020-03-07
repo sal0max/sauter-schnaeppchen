@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import de.salomax.sauterschnaeppchen.R
-import de.salomax.sauterschnaeppchen.model.Item
+import de.salomax.sauterschnaeppchen.data.Item
 import me.zhanghai.android.fastscroll.PopupTextProvider
 import java.text.NumberFormat
 import java.util.*

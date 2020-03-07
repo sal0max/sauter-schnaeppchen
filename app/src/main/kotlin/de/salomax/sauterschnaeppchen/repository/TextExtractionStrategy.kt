@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import com.itextpdf.text.pdf.parser.ImageRenderInfo
 import com.itextpdf.text.pdf.parser.RenderListener
 import com.itextpdf.text.pdf.parser.TextRenderInfo
-import de.salomax.sauterschnaeppchen.model.Item
-import de.salomax.sauterschnaeppchen.model.Condition
-import de.salomax.sauterschnaeppchen.model.System
+import de.salomax.sauterschnaeppchen.data.Item
+import de.salomax.sauterschnaeppchen.data.Condition
+import de.salomax.sauterschnaeppchen.data.TargetSystem
 import java.text.NumberFormat
 import java.util.*
 
@@ -47,7 +47,7 @@ class TextExtractionStrategy : RenderListener {
         // detect end of article block
         val isEnd = currentTextTrimmed.isEmpty()
         if (isEnd) {
-            item?.let { if (it.description != null) articles.add(it) }
+            item?.let { if (it.description.isNotBlank()) articles.add(it) }
             item = Item()
         } else {
             // PARSE: condition & serialNr - always in the same field
@@ -77,11 +77,11 @@ class TextExtractionStrategy : RenderListener {
             ) {
                 item?.price = NumberFormat.getInstance(Locale.GERMAN).parse(
                     currentTextTrimmed.replace(" €", "")
-                )
+                )?.toFloat()
             }
             // PARSE: itemNr
             else if (
-                "\\d{2}\\w{5}\\S{4}".toRegex().matches(currentTextTrimmed)
+                "\\d{1,2}\\w{2,4}\\S{5,6}".toRegex().matches(currentTextTrimmed)
             ) {
                 item?.articleNumber = currentTextTrimmed
             }
@@ -90,6 +90,7 @@ class TextExtractionStrategy : RenderListener {
                 // filter out
                 if (
                     currentTextTrimmed != "Diff.-Best." &&
+                    currentTextTrimmed != "MwSt." &&
                     currentTextTrimmed != "Verkauf solange der Vorrat reicht." &&
                     currentTextTrimmed != "12 Monate Gewährleistung." &&
                     currentTextTrimmed != "Vorbehaltlich Zwischenverkauf." &&
@@ -120,8 +121,8 @@ class TextExtractionStrategy : RenderListener {
                     fixedDesc = fixedDesc.replace(" f ", " für ")
                     fixedDesc = fixedDesc.capitalizeWords()
                     // finish
-                    item?.description = if (item?.description == null) fixedDesc else item?.description + " $fixedDesc"
-                    item?.targetSystem = System.find(item?.description)
+                    item?.description = if (item?.description.isNullOrBlank()) fixedDesc else item?.description + " $fixedDesc"
+                    item?.targetSystem = TargetSystem.find(item?.description)
                 }
             }
         }

@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 29
@@ -67,6 +68,10 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.12.2'
     // parse pdf
     implementation 'com.itextpdf:itextg:5.5.10'
+    // room
+    def room_version = "2.2.4"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
     // test
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

@@ -1,92 +1,103 @@
 package de.salomax.sauterschnaeppchen.repository
 
-import android.util.Log
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.itextpdf.text.pdf.PdfReader
-import de.salomax.sauterschnaeppchen.model.Item
+import de.salomax.sauterschnaeppchen.data.AppDatabase
+import de.salomax.sauterschnaeppchen.data.Item
+import de.salomax.sauterschnaeppchen.data.ItemDao
 import okhttp3.*
 import org.jsoup.Jsoup
 import java.io.IOException
 import java.io.InputStream
 
-object ItemRepository {
+class ItemRepository(context: Context) {
 
-    fun getItems(pdfStream: InputStream): MutableLiveData<Array<Item>> {
-        val items = MutableLiveData<Array<Item>>()
-        items.value = parsePdf(pdfStream)
-        return items
-    }
+    companion object {
+        private var instance: ItemRepository? = null
 
-    fun getItems(result: (Array<Item>?, String?) -> Unit) {
-        getPdfLink { url, error ->
-            if (error != null) {
-                result(null, error)
-            }
-            else {
-                // -----------------
-                downloadPdf(url!!) { pdfStream, error2 ->
-                    if (error2 != null) {
-                        result(null, error2)
-                    } else {
-                        result(parsePdf(pdfStream!!), null)
-                    }
+        fun getInstance(application: Application): ItemRepository {
+            if (instance == null) {
+                synchronized(ItemRepository::class) {
+                    instance = ItemRepository(application)
                 }
-                // -----------------
             }
+            return instance!!
         }
     }
 
-    // network
-    private fun getPdfLink(result: (String?, String?) -> Unit) {
-        OkHttpClient()
-            .newCall(
-                Request.Builder()
-                    .url("https://www.foto-video-sauter.de/used")
-                    .build()
-            )
-            .enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    result(null, e.message)
-                }
+    private var itemDao: ItemDao = AppDatabase.getInstance(context).itemDao()
 
-                override fun onResponse(call: Call, response: Response) {
-                    val doc = Jsoup.parse(response.body?.byteStream()!!, null, "foto-video-sauter.de")
-                    val link = doc.select("a[alt=Second-Hand-Artikel-Liste]").attr("href")
-                    Log.d("s", link)
-                    result(link, null)
-                }
-            })
+    private val liveItems = itemDao.getAll()
+    private var liveError = MutableLiveData<String?>()
+
+    fun getError(): LiveData<String?> {
+        return liveError
     }
 
-    // network
-    private fun downloadPdf(pdfLink: String, result: (InputStream?, String?) -> Unit) {
-        OkHttpClient()
-            .newCall(
-                Request.Builder()
-                    .url(pdfLink)
-                    .build()
-            )
-            .enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    result(null, e.message)
+    fun getItems(): LiveData<Array<Item>> {
+        // get from network
+        getPdfLink { url ->
+            url?.let {
+                // TODO only if new pdf
+                downloadPdf(url) { pdfStream ->
+                    itemDao.insertItems(parsePdf(pdfStream!!))
                 }
-
-                override fun onResponse(call: Call, response: Response) {
-                    result(response.body?.byteStream(), null)
-                }
-            })
+            }
+        }
+        // get from db
+        return liveItems
     }
 
     private fun parsePdf(pdfStream: InputStream): Array<Item> {
         val reader = PdfReader(pdfStream)
-        val parser =
-            PdfReaderContentParser(
-                reader
-            )
+        val parser = PdfReaderContentParser(reader)
         val strategy = parser.processContent(TextExtractionStrategy())
         reader.close()
 
         return strategy.articles.toTypedArray()
+    }
+
+    /*
+     * network call #1 - open website and get link to pdf
+     */
+    private fun getPdfLink(result: (String?) -> Unit) {
+        OkHttpClient().newCall(
+            Request.Builder()
+                .url("https://www.foto-video-sauter.de/used")
+                .build()
+        ).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                liveError.postValue(e.message)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val doc = Jsoup.parse(response.body?.byteStream()!!, null, "foto-video-sauter.de")
+                val link = doc.select("a[alt=Second-Hand-Artikel-Liste]").attr("href")
+                result(link)
+            }
+        })
+    }
+
+    /*
+     * network call #2 - download pdf (as stream)
+     */
+    private fun downloadPdf(pdfLink: String, result: (InputStream?) -> Unit) {
+        OkHttpClient().newCall(
+            Request.Builder()
+                .url(pdfLink)
+                .build()
+        ).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                liveError.postValue(e.message)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                result(response.body?.byteStream())
+            }
+        })
     }
 
 }
