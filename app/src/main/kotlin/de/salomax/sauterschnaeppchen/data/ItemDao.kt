@@ -12,7 +12,7 @@ interface ItemDao {
     fun getAll(): LiveData<Array<Item>>
 
     @Query("SELECT * FROM items WHERE description LIKE :searchTerm")
-    fun getByDescripiton(searchTerm: String): LiveData<List<Item>>
+    fun getByDescription(searchTerm: String): LiveData<List<Item>>
 
     @Insert(onConflict =  OnConflictStrategy.REPLACE)
     fun insertItems(items: Array<Item>)
