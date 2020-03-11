@@ -49,7 +49,6 @@ class MainActivity : AppCompatActivity() {
         val model = ViewModelProviders.of(this).get(ItemViewModel::class.java)
         // items
         model.getItems().observe(this, Observer {
-            swipeRefresh.isRefreshing = false
             errorView.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
             (recyclerView.adapter as MyAdapter).setData(it)
@@ -57,16 +56,17 @@ class MainActivity : AppCompatActivity() {
         // error
         model.getError().observe(this, Observer {
             if (!it.isNullOrBlank()) {
-                swipeRefresh.isRefreshing = false
                 recyclerView.visibility = View.GONE
                 errorView.apply {
-                    swipeRefresh.isRefreshing = false
                     visibility = View.VISIBLE
                     text = it
                 }
             }
         })
-        swipeRefresh.isRefreshing = true
+        // swipeRefresh
+        model.getNetwork().observe(this, Observer {
+            swipeRefresh.isRefreshing = it
+        })
 
         // swipe2refresh
         swipeRefresh.apply {

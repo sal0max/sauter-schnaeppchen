@@ -2,6 +2,7 @@ package de.salomax.sauterschnaeppchen.repository
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
@@ -16,7 +17,7 @@ import java.io.InputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class ItemRepository(private val context: Context) {
+class ItemRepository(context: Context) {
 
     companion object {
         private var instance: ItemRepository? = null
@@ -31,10 +32,20 @@ class ItemRepository(private val context: Context) {
         }
     }
 
+    private var prefManager = PreferenceManager.getDefaultSharedPreferences(context)
     private var itemDao: ItemDao = AppDatabase.getInstance(context).itemDao()
 
     private val liveItems = itemDao.getAll()
     private var liveError = MutableLiveData<String?>()
+    private var liveNetwork = MutableLiveData<Boolean>()
+
+    init {
+        liveNetwork.postValue(false)
+    }
+
+    fun getNetwork(): LiveData<Boolean> {
+        return liveNetwork
+    }
 
     fun getError(): LiveData<String?> {
         return liveError
@@ -44,9 +55,13 @@ class ItemRepository(private val context: Context) {
         // get from network
         getPdfLink { url ->
             url?.let {
-                // TODO only if new pdf
-                downloadPdf(url) { pdfStream ->
-                    itemDao.insertItems(parsePdf(pdfStream!!))
+                // download and parse pdf only if it is new - check based on filename
+                if (url != prefManager.getString("pdfLink", null)) {
+                    downloadPdf(url) { pdfStream ->
+                        itemDao.insertItems(parsePdf(pdfStream!!))
+                    }
+                } else {
+                    Log.v("sauterschnaeppchen", "Pdf hasn't changed: not downloading again.")
                 }
             }
         }
@@ -67,6 +82,8 @@ class ItemRepository(private val context: Context) {
      * network call #1 - open website and get link to pdf
      */
     private fun getPdfLink(result: (String?) -> Unit) {
+        liveNetwork.postValue(true)
+
         OkHttpClient().newCall(
             Request.Builder()
                 .url("https://www.foto-video-sauter.de/used")
@@ -74,18 +91,21 @@ class ItemRepository(private val context: Context) {
         ).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 liveError.postValue(e.message)
+                liveNetwork.postValue(false)
             }
 
             override fun onResponse(call: Call, response: Response) {
                 val doc = Jsoup.parse(response.body?.byteStream()!!, null, "foto-video-sauter.de")
                 val link = doc.select("a[alt=Second-Hand-Artikel-Liste]").attr("href")
-                result(link)
-
+                Log.v("sauterschnaeppchen", "Fetched pdf link: $link")
                 // save pdf date to sharedPrefs
                 val match = "\\d+\\.pdf".toRegex().find(link)
-                PreferenceManager
-                    .getDefaultSharedPreferences(context)
+                prefManager
                     .edit()
+                    .putString(
+                        "pdfLink",
+                        link
+                    )
                     .putString(
                         "pdfTitle",
                         if (match?.value != null) {
@@ -96,6 +116,9 @@ class ItemRepository(private val context: Context) {
                         }
                     )
                     .apply()
+                // return result
+                result(link)
+                liveNetwork.postValue(false)
             }
         })
     }
@@ -104,6 +127,8 @@ class ItemRepository(private val context: Context) {
      * network call #2 - download pdf (as stream)
      */
     private fun downloadPdf(pdfLink: String, result: (InputStream?) -> Unit) {
+        liveNetwork.postValue(true)
+
         OkHttpClient().newCall(
             Request.Builder()
                 .url(pdfLink)
@@ -111,10 +136,12 @@ class ItemRepository(private val context: Context) {
         ).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 liveError.postValue(e.message)
+                liveNetwork.postValue(false)
             }
 
             override fun onResponse(call: Call, response: Response) {
                 result(response.body?.byteStream())
+                liveNetwork.postValue(false)
             }
         })
     }

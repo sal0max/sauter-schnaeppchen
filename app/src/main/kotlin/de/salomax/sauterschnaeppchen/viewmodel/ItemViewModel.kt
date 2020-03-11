@@ -11,10 +11,7 @@ class ItemViewModel(application: Application) : AndroidViewModel(application) {
 
     private var liveItems: LiveData<Array<Item>> = repository.getItems()
     private var liveError: LiveData<String?> = repository.getError()
-
-    fun getError(): LiveData<String?> {
-        return liveError
-    }
+    private var liveNetwork: LiveData<Boolean> = repository.getNetwork()
 
     fun getItems(): LiveData<Array<Item>> {
         return liveItems
@@ -22,6 +19,14 @@ class ItemViewModel(application: Application) : AndroidViewModel(application) {
 
     fun refreshItems() {
         liveItems = repository.getItems()
+    }
+
+    fun getError(): LiveData<String?> {
+        return liveError
+    }
+
+    fun getNetwork(): LiveData<Boolean> {
+        return liveNetwork
     }
 
 
