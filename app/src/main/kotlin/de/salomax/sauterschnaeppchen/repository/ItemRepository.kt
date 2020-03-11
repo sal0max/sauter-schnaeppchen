@@ -39,10 +39,6 @@ class ItemRepository(context: Context) {
     private var liveError = MutableLiveData<String?>()
     private var liveNetwork = MutableLiveData<Boolean>()
 
-    init {
-        liveNetwork.postValue(false)
-    }
-
     fun getNetwork(): LiveData<Boolean> {
         return liveNetwork
     }
@@ -52,6 +48,7 @@ class ItemRepository(context: Context) {
     }
 
     fun getItems(): LiveData<Array<Item>> {
+        liveNetwork.postValue(true)
         // get from network
         getPdfLink { url ->
             url?.let {
@@ -62,6 +59,7 @@ class ItemRepository(context: Context) {
                     }
                 } else {
                     Log.v("sauterschnaeppchen", "Pdf hasn't changed: not downloading again.")
+                    liveNetwork.postValue(false)
                 }
             }
         }
@@ -82,8 +80,6 @@ class ItemRepository(context: Context) {
      * network call #1 - open website and get link to pdf
      */
     private fun getPdfLink(result: (String?) -> Unit) {
-        liveNetwork.postValue(true)
-
         OkHttpClient().newCall(
             Request.Builder()
                 .url("https://www.foto-video-sauter.de/used")
@@ -91,14 +87,15 @@ class ItemRepository(context: Context) {
         ).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 liveError.postValue(e.message)
-                liveNetwork.postValue(false)
             }
 
             override fun onResponse(call: Call, response: Response) {
                 val doc = Jsoup.parse(response.body?.byteStream()!!, null, "foto-video-sauter.de")
                 val link = doc.select("a[alt=Second-Hand-Artikel-Liste]").attr("href")
                 Log.v("sauterschnaeppchen", "Fetched pdf link: $link")
-                // save pdf date to sharedPrefs
+                // return result
+                result(link)
+                // save (new) pdf date to sharedPrefs
                 val match = "\\d+\\.pdf".toRegex().find(link)
                 prefManager
                     .edit()
@@ -116,9 +113,6 @@ class ItemRepository(context: Context) {
                         }
                     )
                     .apply()
-                // return result
-                result(link)
-                liveNetwork.postValue(false)
             }
         })
     }
@@ -127,8 +121,6 @@ class ItemRepository(context: Context) {
      * network call #2 - download pdf (as stream)
      */
     private fun downloadPdf(pdfLink: String, result: (InputStream?) -> Unit) {
-        liveNetwork.postValue(true)
-
         OkHttpClient().newCall(
             Request.Builder()
                 .url(pdfLink)
