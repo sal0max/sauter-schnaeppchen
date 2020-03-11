@@ -2,10 +2,11 @@ package de.salomax.sauterschnaeppchen.data
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.text.NumberFormat
 import java.util.*
 
-@Entity(primaryKeys = ["article_number", "description"], tableName = "items")
+@Entity(tableName = "items")
 data class Item(
     @ColumnInfo(name = "description")
     var description: String = "",
@@ -13,8 +14,9 @@ data class Item(
     @ColumnInfo(name = "condition")
     var condition: Condition? = null,
 
+    @PrimaryKey
     @ColumnInfo(name = "article_number")
-    var articleNumber: String = "",
+    var articleNumber: String = UUID.randomUUID().toString(),
 
     @ColumnInfo(name = "serial_number")
     var serialNumber: String? = null,
