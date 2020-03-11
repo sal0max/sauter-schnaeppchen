@@ -9,12 +9,14 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import de.salomax.sauterschnaeppchen.R
 import de.salomax.sauterschnaeppchen.data.Item
+import de.salomax.sauterschnaeppchen.data.SharedPreferenceStringLiveData
 import de.salomax.sauterschnaeppchen.viewmodel.ItemViewModel
 import me.zhanghai.android.fastscroll.FastScrollerBuilder
 
@@ -46,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         // data
         val model = ViewModelProviders.of(this).get(ItemViewModel::class.java)
         // items
-        model.getItems().observe(this, Observer<Array<Item>> {
+        model.getItems().observe(this, Observer {
             swipeRefresh.isRefreshing = false
             errorView.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
@@ -74,6 +76,13 @@ class MainActivity : AppCompatActivity() {
             )
             setOnRefreshListener { model.refreshItems() }
         }
+
+        // title
+        SharedPreferenceStringLiveData(PreferenceManager.getDefaultSharedPreferences(this), "pdfTitle", null).observe(this, Observer {
+            title =
+                if (it != null) getString(R.string.app_title, it)
+                else getString(R.string.app_name)
+        })
     }
 
     private fun createDivider(context: Context): DividerItemDecoration {
