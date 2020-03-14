@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_title">Schnäppchen vom %1$s</string>
+
+    <string name="search_on_google">Auf Google suchen</string>
+    <string name="search_the_dslr_forum">Das DSLR-Forum durchsuchen</string>
+    <string name="open_nikon_gebrauchtpreisliste">\"Nikon Gebrauchtpreisliste\" öffnen</string>
+</resources>
