@@ -13,11 +13,11 @@
                 ~~&& store to db~~
 - ~~show date of file~~
 - ~~delete old entries if new pdf~~
+- ~~add links to every item:~~
+   - ~~google search~~
+   - ~~dslr-forum search?~~
 
 - search (filter)
 - highlight new items?
-- add links to every item:
-   - google search
-   - dslr-forum search?
 - add link to toolbar:
     - www.fotoversicherung.com/fotoversicherung/gebrauchtpreisliste-nikon/

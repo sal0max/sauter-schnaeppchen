@@ -1,10 +1,15 @@
 package de.salomax.sauterschnaeppchen.view
 
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import de.salomax.sauterschnaeppchen.R
 import de.salomax.sauterschnaeppchen.data.Item
@@ -44,14 +49,38 @@ class MyAdapter :
         private val condition: TextView = itemView.findViewById(R.id.condition)
         private val itemNr: TextView = itemView.findViewById(R.id.articleNumber)
         private val price: TextView = itemView.findViewById(R.id.price)
+        private val btnExpand: ImageButton = itemView.findViewById(R.id.btnExpand)
 
         fun bind(item: Item) {
             desc.text = item.description
             serialNr.text = item.serialNumber?.let { "S/N: $it" }
             condition.text = item.condition?.toString()
             itemNr.text = item.articleNumber
-            price.text =
-                item.price?.let { NumberFormat.getCurrencyInstance(Locale.GERMANY).format(it) }
+            price.text = item.price?.let { NumberFormat.getCurrencyInstance(Locale.GERMANY).format(it) }
+            btnExpand.setOnClickListener { btnView ->
+                //creating a popup menu
+                val popup = PopupMenu(itemView.context, btnView)
+                //inflating menu from xml resource
+                popup.inflate(R.menu.options_menu)
+                //adding click listener
+                popup.setOnMenuItemClickListener { menuItem ->
+                    when (menuItem.itemId) {
+                        R.id.searchGoogle -> {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com/search?q=${item.description}"))
+                            startActivity(itemView.context, intent, null)
+                            true
+                        }
+                        R.id.searchDslrForum -> {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://cse.google.com/cse?cx=partner-pub-7419312382987712%3A6700817117&q=${item.description}"))
+                            startActivity(itemView.context, intent, null)
+                            true
+                        }
+                        else -> false
+                    }
+                }
+                //displaying the popup
+                popup.show()
+            }
         }
     }
 

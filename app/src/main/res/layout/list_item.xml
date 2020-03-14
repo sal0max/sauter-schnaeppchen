@@ -4,27 +4,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/padding2x">
+    android:paddingBottom="@dimen/padding2x">
 
     <TextView
         android:id="@+id/description"
         style="@style/TextAppearance.AppCompat.Body2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/padding"
+        android:layout_marginStart="@dimen/padding2x"
+        android:layout_marginTop="@dimen/padding2x"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnExpand"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Zeiss Ikon Distagon T* 3,5/18mm ZF Nikon + Zubehör" />
+
+    <ImageButton
+        android:id="@+id/btnExpand"
+        android:layout_width="?attr/actionBarSize"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="2dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_more_24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/serialNumber"
         style="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding2x"
+        android:layout_marginTop="@dimen/padding2x"
         android:alpha=".66"
         android:fontFamily="sans-serif-light"
+        android:textAlignment="viewStart"
         app:layout_constraintEnd_toStartOf="@id/articleNumber"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/description"
@@ -35,9 +50,11 @@
         style="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding2x"
+        android:layout_marginEnd="@dimen/padding2x"
         android:alpha=".66"
         android:fontFamily="sans-serif-light"
-        android:textAlignment="textEnd"
+        android:textAlignment="viewEnd"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/serialNumber"
         app:layout_constraintTop_toBottomOf="@id/description"
@@ -48,6 +65,8 @@
         style="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding2x"
+        android:textAlignment="viewStart"
         app:layout_constraintEnd_toStartOf="@id/price"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/serialNumber"
@@ -58,10 +77,12 @@
         style="@style/TextAppearance.AppCompat.Body2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textAlignment="textEnd"
+        android:layout_marginEnd="@dimen/padding2x"
+        android:textAlignment="viewEnd"
         android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/condition"
-        app:layout_constraintTop_toBottomOf="@id/serialNumber"
+        app:layout_constraintTop_toBottomOf="@id/articleNumber"
         tools:text="379,00 €" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
