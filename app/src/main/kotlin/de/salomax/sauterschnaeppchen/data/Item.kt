@@ -65,6 +65,7 @@ enum class Condition {
 /**
  *
  */
+@Suppress("EnumEntryName", "SpellCheckingInspection", "NonAsciiCharacters")
 enum class TargetSystem {
     Canon,
     Fujifilm,
@@ -74,13 +75,19 @@ enum class TargetSystem {
     Panasonic,
     Pentax,
     Sony,
+    Alpa,
 
     Bronica,
     Contax,
     Hasselblad,
     Mamiya,
     Minolta,
-    Rollei;
+    Rollei,
+    Pentacon,
+    Voigtländer,
+    Yashica,
+
+    UNKNOWN;
 
     companion object {
 
@@ -89,22 +96,41 @@ enum class TargetSystem {
         fun find(type: String?): TargetSystem? =
             when {
                 type == null -> null
-                type.contains("Canon").or(type.contains(" FD")) -> Canon
-                type.contains("Fujifilm") -> Fujifilm
-                type.contains("Leica").or(type.contains(" ZM")) -> Leica
-                type.contains("Nikon").or(type.contains(" EF")) -> Nikon
-                type.contains("Olympus") -> Olympus
+                type.contains("Canon")
+                    .or(type.contains("EOS"))
+                    .or(type.contains("FD")) -> Canon
+                type.contains("Fujifilm")
+                    .or(type.contains("Fujiflm"))
+                    .or(type.contains("Fuji")) -> Fujifilm
+                type.contains("Leica")
+                    .or(type.contains("ZM"))
+                    .or(type.contains("Schraubleica"))
+                    .or(type.contains("Summicron"))
+                    .or(type.contains("Sonnar"))
+                    .or(type.contains("Summilux")) -> Leica
+                type.contains("Nikon")
+                    .or(type.contains(" EF")) -> Nikon
+                type.contains("Olympus")
+                    .or(type.contains("Olmypus")) -> Olympus
                 type.contains("Panasonic") -> Panasonic
                 type.contains("Pentax") -> Pentax
-                type.contains("Sony") -> Sony
+                type.contains("Sony")
+                    .or(type.contains("Batis"))
+                    .or(type.contains("E-Mount", ignoreCase = true)) -> Sony
+                type.contains("Alpa") -> Alpa
                 type.contains("Bronica") -> Bronica
                 type.contains("Contax") -> Contax
                 type.contains("Hasselblad") -> Hasselblad
                 type.contains("Mamiya") -> Mamiya
                 type.contains("Minolta") -> Minolta
-                type.contains("Rollei") -> Rollei
+                type.contains("Rollei")
+                    .or(type.contains("QBM")) -> Rollei
+                type.contains("Pentacon")
+                    .or(type.contains("Praktica")) -> Pentacon
+                type.contains("Voigtländer") -> Voigtländer
+                type.contains("Yashica") -> Yashica
                 type.contains("SB-? ?\\d+".toRegex()) -> Nikon // Nikon flashes: e.g. "SB-28", "SB600", "SB-800", "SB 900"
-                else -> null
+                else -> UNKNOWN
             }
     }
 

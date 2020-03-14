@@ -5,4 +5,7 @@
     <string name="search_on_google">Search on Google</string>
     <string name="search_the_dslr_forum">Search the DSLR-Forum</string>
     <string name="open_nikon_gebrauchtpreisliste">Open \"Nikon-Gebrauchtpreisliste\"</string>
+    <string name="filter_list">Filter list</string>
+    <string name="filter_show_all">All</string>
+    <string name="filter_show_unknown">Miscellaneous</string>
 </resources>

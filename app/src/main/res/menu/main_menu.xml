@@ -6,4 +6,11 @@
         android:icon="@drawable/ic_open_in_browser_24dp"
         android:title="@string/open_nikon_gebrauchtpreisliste"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/filterList"
+        android:icon="@drawable/ic_filter_list_24dp"
+        android:title="@string/filter_list"
+        app:showAsAction="ifRoom">
+        <menu />
+    </item>
 </menu>

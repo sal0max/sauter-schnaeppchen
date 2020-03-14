@@ -21,10 +21,13 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import de.salomax.sauterschnaeppchen.R
 import de.salomax.sauterschnaeppchen.data.SharedPreferenceStringLiveData
+import de.salomax.sauterschnaeppchen.data.TargetSystem
 import de.salomax.sauterschnaeppchen.viewmodel.ItemViewModel
 import me.zhanghai.android.fastscroll.FastScrollerBuilder
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var model: ItemViewModel
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var errorView: TextView
@@ -50,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // data
-        val model = ViewModelProviders.of(this).get(ItemViewModel::class.java)
+        model = ViewModelProviders.of(this).get(ItemViewModel::class.java)
         // items
         model.getItems().observe(this, Observer {
             errorView.visibility = View.GONE
@@ -91,6 +94,26 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
+        // add system filters
+        menu?.findItem(R.id.filterList)?.subMenu?.apply {
+            // "ALL"
+            val itemAll = add(Menu.NONE, Menu.NONE, Menu.NONE, R.string.filter_show_all)
+            itemAll.setOnMenuItemClickListener {
+                (recyclerView.adapter as MyAdapter).filter(null)
+                true
+            }
+            // all the systems
+            TargetSystem.values().forEach { system ->
+                val item = if (system.name == "UNKNOWN") {
+                    add(Menu.NONE, system.ordinal, Menu.NONE, getString(R.string.filter_show_unknown))
+                } else
+                    add(Menu.NONE, system.ordinal, Menu.NONE, system.name)
+                item.setOnMenuItemClickListener {
+                    (recyclerView.adapter as MyAdapter).filter(TargetSystem.valueOf(system.ordinal))
+                    true
+                }
+            }
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
