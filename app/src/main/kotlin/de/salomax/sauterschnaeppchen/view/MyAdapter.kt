@@ -13,7 +13,6 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import de.salomax.sauterschnaeppchen.R
 import de.salomax.sauterschnaeppchen.data.Item
-import de.salomax.sauterschnaeppchen.data.TargetSystem
 import me.zhanghai.android.fastscroll.PopupTextProvider
 import java.text.NumberFormat
 import java.util.*
@@ -22,34 +21,11 @@ class MyAdapter :
     RecyclerView.Adapter<MyAdapter.ViewHolder>(), PopupTextProvider {
 
     private var items: Array<Item>? = null
-    private var system: TargetSystem? = null
 
     fun setData(items: Array<Item>?) {
         this.items = items
         notifyDataSetChanged()
     }
-
-    fun filter(system: TargetSystem?) {
-        this.system = system
-        notifyDataSetChanged()
-    }
-
-    private fun getItem(position: Int): Item? {
-        return if (items != null) {
-            if (system != null)
-                return items!!.filter { it.targetSystem == system }[position]
-            else
-                return items!![position]
-        } else null
-    }
-
-    override fun getItemCount() =
-        if (items != null) {
-            if (system != null)
-                items!!.filter { it.targetSystem == system }.size
-            else items!!.size
-        }
-        else 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layout = LayoutInflater.from(parent.context).inflate(
@@ -61,12 +37,11 @@ class MyAdapter :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it) }
+        items?.get(position)?.let { holder.bind(it) }
+        getItemId(position)
     }
 
-    override fun getPopupText(position: Int): String {
-        return getItem(position)?.description?.substring(0, 1) ?: ""
-    }
+    override fun getItemCount() = items?.size ?: 0
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val desc: TextView = itemView.findViewById(R.id.description)
@@ -107,6 +82,10 @@ class MyAdapter :
                 popup.show()
             }
         }
+    }
+
+    override fun getPopupText(position: Int): String {
+        return items?.get(position)?.description?.substring(0, 1) ?: ""
     }
 
 }

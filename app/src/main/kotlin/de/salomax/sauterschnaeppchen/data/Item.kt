@@ -106,7 +106,7 @@ enum class TargetSystem {
                     .or(type.contains("ZM"))
                     .or(type.contains("Schraubleica"))
                     .or(type.contains("Summicron"))
-                    .or(type.contains("Sonnar"))
+                    //.or(type.contains("Sonnar")) // also produced for Hasselblad!
                     .or(type.contains("Summilux")) -> Leica
                 type.contains("Nikon")
                     .or(type.contains(" EF")) -> Nikon

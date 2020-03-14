@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
             // "ALL"
             val itemAll = add(Menu.NONE, Menu.NONE, Menu.NONE, R.string.filter_show_all)
             itemAll.setOnMenuItemClickListener {
-                (recyclerView.adapter as MyAdapter).filter(null)
+                model.filterBy(null)
                 true
             }
             // all the systems
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
                 } else
                     add(Menu.NONE, system.ordinal, Menu.NONE, system.name)
                 item.setOnMenuItemClickListener {
-                    (recyclerView.adapter as MyAdapter).filter(TargetSystem.valueOf(system.ordinal))
+                    model.filterBy(TargetSystem.valueOf(system.ordinal))
                     true
                 }
             }
