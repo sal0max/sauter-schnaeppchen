@@ -8,4 +8,7 @@
     <string name="filter_list">Filtern</string>
     <string name="filter_show_all">Alles</string>
     <string name="filter_show_unknown">Sonstiges</string>
+    <string name="sort_by">Sortiere nach…</string>
+    <string name="sort_price">Preis</string>
+    <string name="sort_description">Beschreibung</string>
 </resources>

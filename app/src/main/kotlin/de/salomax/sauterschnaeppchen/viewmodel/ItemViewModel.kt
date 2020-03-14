@@ -16,19 +16,16 @@ class ItemViewModel(application: Application) : AndroidViewModel(application) {
     private val liveError = repository.getError()
     private val liveNetwork = repository.getNetwork()
 
-//    private var currentSortOrder = "description" // price, description
+    private var currentSortOrder = 1 // 0=price, 1=description
     private var currentFilter: TargetSystem? = null // TargetSystem
+
+    /*
+     * Items =======================================================================================
+     */
 
     init {
         liveItems.addSource(dbLiveItems) { result: Array<Item>? ->
-            result?.let { items ->
-                if (currentFilter != null)
-                    liveItems.value = items
-                        .filter { item -> item.targetSystem == currentFilter }
-                        .toTypedArray()
-                else
-                    liveItems.value = items
-            }
+            filterAndSort(result)
         }
     }
 
@@ -36,25 +33,57 @@ class ItemViewModel(application: Application) : AndroidViewModel(application) {
         return liveItems
     }
 
-    fun filterBy(system: TargetSystem?) = dbLiveItems.value?.let { items ->
-        if (system == null)
-            liveItems.value = items
-        else liveItems.value = items
-            .filter { item -> item.targetSystem == system }
-            .toTypedArray()
-    }.also { currentFilter = system }
-
     fun refreshItems() {
         dbLiveItems = repository.getItems()
     }
+
+    fun filterBy(system: TargetSystem?) = dbLiveItems.value?.let { items ->
+        currentFilter = system
+        filterAndSort(items)
+    }
+
+    fun sortByPrice() = dbLiveItems.value?.let { items ->
+        currentSortOrder = 0
+        filterAndSort(items)
+    }
+
+    fun sortByDescription() = dbLiveItems.value?.let { items ->
+        currentSortOrder = 1
+        filterAndSort(items)
+    }
+
+    /*
+     * does the heavy lifting
+     */
+    private fun filterAndSort(items: Array<Item>?) {
+        // filter
+        if (currentFilter != null)
+            liveItems.value = items
+                ?.filter { item -> item.targetSystem == currentFilter }
+                ?.toTypedArray()
+        else
+            liveItems.value = items
+        // sort
+        when (currentSortOrder) {
+            0 -> liveItems.value?.sortBy { item -> item.price }
+            1 -> liveItems.value?.sortBy { item -> item.description }
+        }
+    }
+
+    /*
+     * Error =======================================================================================
+     */
 
     fun getError(): LiveData<String?> {
         return liveError
     }
 
+    /*
+     * Network =====================================================================================
+     */
+
     fun getNetwork(): LiveData<Boolean> {
         return liveNetwork
     }
-
 
 }

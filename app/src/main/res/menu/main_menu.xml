@@ -7,6 +7,20 @@
         android:title="@string/open_nikon_gebrauchtpreisliste"
         app:showAsAction="never" />
     <item
+        android:id="@+id/sortList"
+        android:icon="@drawable/ic_sort_24dp"
+        android:title="@string/sort_by"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/sort_price"
+                android:title="@string/sort_price" />
+            <item
+                android:id="@+id/sort_description"
+                android:title="@string/sort_description" />
+        </menu>
+    </item>
+    <item
         android:id="@+id/filterList"
         android:icon="@drawable/ic_filter_list_24dp"
         android:title="@string/filter_list"

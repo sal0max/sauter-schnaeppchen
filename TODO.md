@@ -19,6 +19,7 @@
 - ~~add link to toolbar:~~
     - ~~www.fotoversicherung.com/fotoversicherung/gebrauchtpreisliste-nikon/~~
 - ~~filter by targetSystem~~
+- ~~sort by ...~~
 
 - search (filter)
 - highlight new items?

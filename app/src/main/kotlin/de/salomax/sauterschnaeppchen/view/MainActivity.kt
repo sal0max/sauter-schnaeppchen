@@ -124,6 +124,12 @@ class MainActivity : AppCompatActivity() {
                 ContextCompat.startActivity(this, intent, null)
                 return true
             }
+            R.id.sort_price -> {
+                model.sortByPrice()
+            }
+            R.id.sort_description -> {
+                model.sortByDescription()
+            }
         }
         return super.onOptionsItemSelected(item)
     }
