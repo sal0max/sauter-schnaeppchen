@@ -55,7 +55,8 @@ class ItemRepository(context: Context) {
                 // download and parse pdf only if it is new - check based on filename
                 if (url != prefManager.getString("pdfLink", null)) {
                     downloadPdf(url) { pdfStream ->
-                        itemDao.insertItems(parsePdf(pdfStream!!))
+                        itemDao.deleteAll() // delete the old
+                        itemDao.insertItems(parsePdf(pdfStream!!)) // insert the new
                     }
                 } else {
                     Log.v("sauterschnaeppchen", "Pdf hasn't changed: not downloading again.")
