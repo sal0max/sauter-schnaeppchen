@@ -16,8 +16,9 @@
 - ~~add links to every item:~~
    - ~~google search~~
    - ~~dslr-forum search?~~
+- ~~add link to toolbar:~~
+    - ~~www.fotoversicherung.com/fotoversicherung/gebrauchtpreisliste-nikon/~~
 
 - search (filter)
 - highlight new items?
-- add link to toolbar:
-    - www.fotoversicherung.com/fotoversicherung/gebrauchtpreisliste-nikon/
+- group by targetSystem

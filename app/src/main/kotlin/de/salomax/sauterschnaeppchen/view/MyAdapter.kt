@@ -61,7 +61,7 @@ class MyAdapter :
                 //creating a popup menu
                 val popup = PopupMenu(itemView.context, btnView)
                 //inflating menu from xml resource
-                popup.inflate(R.menu.options_menu)
+                popup.inflate(R.menu.item_menu)
                 //adding click listener
                 popup.setOnMenuItemClickListener { menuItem ->
                     when (menuItem.itemId) {

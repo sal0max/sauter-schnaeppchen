@@ -1,12 +1,17 @@
 package de.salomax.sauterschnaeppchen.view
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.TypedArray
 import android.graphics.drawable.InsetDrawable
+import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceManager
@@ -15,7 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import de.salomax.sauterschnaeppchen.R
-import de.salomax.sauterschnaeppchen.data.Item
 import de.salomax.sauterschnaeppchen.data.SharedPreferenceStringLiveData
 import de.salomax.sauterschnaeppchen.viewmodel.ItemViewModel
 import me.zhanghai.android.fastscroll.FastScrollerBuilder
@@ -83,6 +87,22 @@ class MainActivity : AppCompatActivity() {
                 if (it != null) getString(R.string.app_title, it)
                 else getString(R.string.app_name)
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.openGebrauchtpreislisteNikon -> {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.fotoversicherung.com/fotoversicherung/gebrauchtpreisliste-nikon/"))
+                ContextCompat.startActivity(this, intent, null)
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun createDivider(context: Context): DividerItemDecoration {
