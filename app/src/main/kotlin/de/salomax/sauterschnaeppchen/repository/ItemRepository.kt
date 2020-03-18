@@ -93,8 +93,8 @@ class ItemRepository(val context: Context) {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val doc = Jsoup.parse(response.body?.byteStream()!!, null, "foto-video-sauter.de")
-                val link = doc.select("a[alt=Second-Hand-Artikel-Liste]").attr("href")
+                val doc = Jsoup.parse(response.body?.byteStream()!!, null, "https://www.foto-video-sauter.de")
+                val link = doc.select("a.btn[target=_blank]").last().attr("abs:href")
                 Log.v("sauterschnaeppchen", "Fetched pdf link: $link")
                 if (link.isEmpty()) {
                     liveError.postValue(context.getString(R.string.error_no_pdf))
