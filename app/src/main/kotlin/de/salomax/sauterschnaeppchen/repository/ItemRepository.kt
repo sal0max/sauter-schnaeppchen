@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import com.itextpdf.text.pdf.PdfReader
+import de.salomax.sauterschnaeppchen.R
 import de.salomax.sauterschnaeppchen.data.AppDatabase
 import de.salomax.sauterschnaeppchen.data.Item
 import de.salomax.sauterschnaeppchen.data.ItemDao
@@ -17,7 +18,7 @@ import java.io.InputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class ItemRepository(context: Context) {
+class ItemRepository(val context: Context) {
 
     companion object {
         private var instance: ItemRepository? = null
@@ -88,32 +89,38 @@ class ItemRepository(context: Context) {
         ).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 liveError.postValue(e.message)
+                liveNetwork.postValue(false)
             }
 
             override fun onResponse(call: Call, response: Response) {
                 val doc = Jsoup.parse(response.body?.byteStream()!!, null, "foto-video-sauter.de")
                 val link = doc.select("a[alt=Second-Hand-Artikel-Liste]").attr("href")
                 Log.v("sauterschnaeppchen", "Fetched pdf link: $link")
-                // return result
-                result(link)
-                // save (new) pdf date to sharedPrefs
-                val match = "\\d+\\.pdf".toRegex().find(link)
-                prefManager
-                    .edit()
-                    .putString(
-                        "pdfLink",
-                        link
-                    )
-                    .putString(
-                        "pdfTitle",
-                        if (match?.value != null) {
-                            LocalDate.parse(match.value, DateTimeFormatter.ofPattern("yyyyMMdd'.pdf'"))
-                                .format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-                        } else {
-                            null
-                        }
-                    )
-                    .apply()
+                if (link.isEmpty()) {
+                    liveError.postValue(context.getString(R.string.error_no_pdf))
+                    liveNetwork.postValue(false)
+                } else {
+                    // return result
+                    result(link)
+                    // save (new) pdf date to sharedPrefs
+                    val match = "\\d+\\.pdf".toRegex().find(link)
+                    prefManager
+                        .edit()
+                        .putString(
+                            "pdfLink",
+                            link
+                        )
+                        .putString(
+                            "pdfTitle",
+                            if (match?.value != null) {
+                                LocalDate.parse(match.value, DateTimeFormatter.ofPattern("yyyyMMdd'.pdf'"))
+                                    .format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                            } else {
+                                null
+                            }
+                        )
+                        .apply()
+                }
             }
         })
     }

@@ -2,6 +2,7 @@
     <string name="app_name" translatable="false">Sauter Schnäppchen</string>
     <string name="app_title">Schnäppchen (%1$s)</string>
 
+    <string name="error_no_pdf">PDF can\'t be found</string>
     <string name="search_on_google">Search on Google</string>
     <string name="search_the_dslr_forum">Search the DSLR-Forum</string>
     <string name="open_nikon_gebrauchtpreisliste">Open \"Nikon-Gebrauchtpreisliste\"</string>
