@@ -95,8 +95,10 @@ class TextExtractionStrategy : RenderListener {
                     currentTextTrimmed != "12 Monate Gewährleistung." &&
                     currentTextTrimmed != "Vorbehaltlich Zwischenverkauf." &&
                     currentTextTrimmed != "Foto-Video Sauter GmbH Co. KG" &&
+                    currentTextTrimmed != "Foto-Video Sauter GmbH Co.KG" &&
                     currentTextTrimmed != "Sonnenstraße 26" &&
                     currentTextTrimmed != "80331 München" &&
+                    currentTextTrimmed != "Sonnenstr. 26; 80331 München" &&
                     currentTextTrimmed != "Daten" &&
                     currentTextTrimmed != "Beschreibung" &&
                     currentTextTrimmed != "Zustand" &&
@@ -104,6 +106,8 @@ class TextExtractionStrategy : RenderListener {
                     currentTextTrimmed != "Steuer-Art" &&
                     currentTextTrimmed != "Excl MwST" &&
                     currentTextTrimmed != "incl. MwSt." &&
+                    currentTextTrimmed != "verkauf@foto-video-sauter.de" &&
+                    currentTextTrimmed != "089 55 15 04 0" &&
                     currentTextTrimmed != "Foto-Video-Sauter  -  Second-Hand-Artikel" &&
                     currentTextTrimmed != "*      Mit" &&
                     currentTextTrimmed != "bezeichenete Artikel werden nach  § 25a UStG als Gebrauchtwaren differenzbesteuert." &&
