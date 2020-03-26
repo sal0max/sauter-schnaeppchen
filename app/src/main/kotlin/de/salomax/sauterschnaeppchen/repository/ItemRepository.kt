@@ -2,6 +2,7 @@ package de.salomax.sauterschnaeppchen.repository
 
 import android.app.Application
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,8 +16,6 @@ import okhttp3.*
 import org.jsoup.Jsoup
 import java.io.IOException
 import java.io.InputStream
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class ItemRepository(val context: Context) {
 
@@ -103,22 +102,12 @@ class ItemRepository(val context: Context) {
                     // return result
                     result(link)
                     // save (new) pdf date to sharedPrefs
-                    val match = "\\d+\\.pdf".toRegex().find(link)
+                    // - secondhand-liste-20200211.pdf
+                    // - Second Hand Liste_25.03.2020.pdf // 25 03 2020
                     prefManager
                         .edit()
-                        .putString(
-                            "pdfLink",
-                            link
-                        )
-                        .putString(
-                            "pdfTitle",
-                            if (match?.value != null) {
-                                LocalDate.parse(match.value, DateTimeFormatter.ofPattern("yyyyMMdd'.pdf'"))
-                                    .format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-                            } else {
-                                null
-                            }
-                        )
+                        .putString("pdfLink", link)
+                        .putString("pdfTitle", Uri.parse(link).lastPathSegment?.replace(".pdf", ""))
                         .apply()
                 }
             }

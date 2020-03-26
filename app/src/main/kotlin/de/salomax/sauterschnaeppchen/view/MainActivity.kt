@@ -86,9 +86,7 @@ class MainActivity : AppCompatActivity() {
 
         // title
         SharedPreferenceStringLiveData(PreferenceManager.getDefaultSharedPreferences(this), "pdfTitle", null).observe(this, Observer {
-            title =
-                if (it != null) getString(R.string.app_title, it)
-                else getString(R.string.app_name)
+            title = it ?: getString(R.string.app_name)
         })
     }
 

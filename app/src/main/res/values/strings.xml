@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name" translatable="false">Sauter Schnäppchen</string>
-    <string name="app_title">Schnäppchen (%1$s)</string>
 
     <string name="error_no_pdf">PDF can\'t be found</string>
     <string name="search_on_google">Search on Google</string>
