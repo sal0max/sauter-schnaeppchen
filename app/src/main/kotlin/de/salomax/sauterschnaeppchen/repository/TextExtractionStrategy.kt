@@ -44,90 +44,89 @@ class TextExtractionStrategy : RenderListener {
         // save
 //        allText.append("$currentTextTrimmed\n")
 
-        // detect end of article block
-        val isEnd = currentTextTrimmed.isEmpty()
-        if (isEnd) {
+        // PARSE: condition & serialNr - always in the same field **********************************
+        if (
+            currentTextTrimmed.contains("Zust.:") ||
+            currentTextTrimmed.contains("Zustand:") ||
+            currentTextTrimmed.contains("SN:")
+        ) {
+            // condition ***************************************************************************
+            var condition: String? = currentTextTrimmed
+                .replace("Zustand: ", "Zust.:")
+                .replace("Zustand:", "Zust.:")
+            condition = condition?.let {
+                "Zust\\.:\\S+".toRegex()
+                    .find(it)?.value
+                    ?.replace("Zust.:", "")
+                    ?.replace("/", "")
+            }
+            item?.condition = condition?.let { Condition.valueOf(it) }
+            // serialNr ****************************************************************************
+            val serialNr = currentTextTrimmed.replace("SN: ", "SN:")
+            item?.serialNumber = "SN:\\S+".toRegex().find(serialNr)?.value?.replace("SN:", "")
+        }
+
+        // PARSE: price, e. g. "1.299,00 €" ********************************************************
+        else if (currentTextTrimmed.contains("€") || "(\\d+.)?\\d+,\\d{2}".toRegex().matches(currentTextTrimmed)) {
+            item?.price = NumberFormat.getInstance().parse(
+                currentTextTrimmed.replace(" €", "")
+            )?.toFloat()
+            /*
+             * END (price is always last) **********************************************************
+             */
             item?.let { if (it.description.isNotBlank()) articles.add(it) }
             item = Item()
-        } else {
-            // PARSE: condition & serialNr - always in the same field
+        }
+
+        // PARSE: itemNr ***************************************************************************
+        else if (
+            "\\d{1,2}\\w{2,4}\\S{5,6}".toRegex().matches(currentTextTrimmed)
+        ) {
+            item?.articleNumber = currentTextTrimmed
+        }
+
+        // PARSE: desc *****************************************************************************
+        else {
+            // filter out
             if (
-                currentTextTrimmed.contains("Zust.:") ||
-                currentTextTrimmed.contains("Zustand:") ||
-                currentTextTrimmed.contains("SN:")
+                currentTextTrimmed != "Diff.-Best." &&
+                currentTextTrimmed != "MwSt." &&
+                currentTextTrimmed != "Verkauf solange der Vorrat reicht." &&
+                currentTextTrimmed != "12 Monate Gewährleistung." &&
+                currentTextTrimmed != "Vorbehaltlich Zwischenverkauf." &&
+                currentTextTrimmed != "Foto-Video Sauter GmbH Co. KG" &&
+                currentTextTrimmed != "Foto-Video Sauter GmbH Co.KG" &&
+                currentTextTrimmed != "Sonnenstraße 26" &&
+                currentTextTrimmed != "80331 München" &&
+                currentTextTrimmed != "Sonnenstr. 26; 80331 München" &&
+                currentTextTrimmed != "Daten" &&
+                currentTextTrimmed != "Beschreibung" &&
+                currentTextTrimmed != "Zustand" &&
+                currentTextTrimmed != "Artikelnr." &&
+                currentTextTrimmed != "Steuer-Art" &&
+                currentTextTrimmed != "Excl MwST" &&
+                currentTextTrimmed != "incl. MwSt." &&
+                currentTextTrimmed != "verkauf@foto-video-sauter.de" &&
+                currentTextTrimmed != "089 55 15 04 0" &&
+                currentTextTrimmed != "Foto-Video-Sauter  -  Second-Hand-Artikel" &&
+                currentTextTrimmed != "*      Mit" &&
+                currentTextTrimmed != "bezeichenete Artikel werden nach  § 25a UStG als Gebrauchtwaren differenzbesteuert." &&
+                currentTextTrimmed != "." &&
+                !currentTextTrimmed.startsWith("+49 (0)") &&
+                !currentTextTrimmed.contains("Seite \\d+ von".toRegex()) &&
+                !currentTextTrimmed.contains("Stand\\s+\\d+".toRegex())
             ) {
-                //condition
-                var condition: String? = currentTextTrimmed
-                    .replace("Zustand: ", "Zust.:")
-                    .replace("Zustand:", "Zust.:")
-                condition = condition?.let {
-                    "Zust\\.:\\S+".toRegex()
-                        .find(it)?.value
-                        ?.replace("Zust.:", "")
-                        ?.replace("/", "")
-                }
-                item?.condition = condition?.let { Condition.valueOf(it) }
-                // serialNr
-                val serialNr = currentTextTrimmed.replace("SN: ", "SN:")
-                item?.serialNumber = "SN:\\S+".toRegex().find(serialNr)?.value?.replace("SN:", "")
-            }
-            // PARSE: price, e. g. "1.299,00 €"
-            else if (
-                currentTextTrimmed.contains("€")
-            ) {
-                item?.price = NumberFormat.getInstance(Locale.GERMAN).parse(
-                    currentTextTrimmed.replace(" €", "")
-                )?.toFloat()
-            }
-            // PARSE: itemNr
-            else if (
-                "\\d{1,2}\\w{2,4}\\S{5,6}".toRegex().matches(currentTextTrimmed)
-            ) {
-                item?.articleNumber = currentTextTrimmed
-            }
-            // PARSE: desc
-            else {
-                // filter out
-                if (
-                    currentTextTrimmed != "Diff.-Best." &&
-                    currentTextTrimmed != "MwSt." &&
-                    currentTextTrimmed != "Verkauf solange der Vorrat reicht." &&
-                    currentTextTrimmed != "12 Monate Gewährleistung." &&
-                    currentTextTrimmed != "Vorbehaltlich Zwischenverkauf." &&
-                    currentTextTrimmed != "Foto-Video Sauter GmbH Co. KG" &&
-                    currentTextTrimmed != "Foto-Video Sauter GmbH Co.KG" &&
-                    currentTextTrimmed != "Sonnenstraße 26" &&
-                    currentTextTrimmed != "80331 München" &&
-                    currentTextTrimmed != "Sonnenstr. 26; 80331 München" &&
-                    currentTextTrimmed != "Daten" &&
-                    currentTextTrimmed != "Beschreibung" &&
-                    currentTextTrimmed != "Zustand" &&
-                    currentTextTrimmed != "Artikelnr." &&
-                    currentTextTrimmed != "Steuer-Art" &&
-                    currentTextTrimmed != "Excl MwST" &&
-                    currentTextTrimmed != "incl. MwSt." &&
-                    currentTextTrimmed != "verkauf@foto-video-sauter.de" &&
-                    currentTextTrimmed != "089 55 15 04 0" &&
-                    currentTextTrimmed != "Foto-Video-Sauter  -  Second-Hand-Artikel" &&
-                    currentTextTrimmed != "*      Mit" &&
-                    currentTextTrimmed != "bezeichenete Artikel werden nach  § 25a UStG als Gebrauchtwaren differenzbesteuert." &&
-                    currentTextTrimmed != "." &&
-                    !currentTextTrimmed.startsWith("+49 (0)") &&
-                    !currentTextTrimmed.contains("Seite \\d+ von".toRegex()) &&
-                    !currentTextTrimmed.contains("Stand\\s+\\d+".toRegex())
-                ) {
-                    // clean sloppy descriptions
-                    var fixedDesc = currentTextTrimmed.replace("+", " + ")
-                    fixedDesc = fixedDesc.replace("\\s+".toRegex(), " ")
-                    fixedDesc = fixedDesc.replace("Zub.", "Zubehör")
-                    fixedDesc = fixedDesc.replace("Sobl.", "Sonnenblende")
-                    fixedDesc = fixedDesc.replace("Ta.", "Tasche")
-                    fixedDesc = fixedDesc.replace(" f ", " für ")
-                    fixedDesc = fixedDesc.capitalizeWords()
-                    // finish
-                    item?.description = if (item?.description.isNullOrBlank()) fixedDesc else item?.description + " $fixedDesc"
-                    item?.targetSystem = TargetSystem.find(item?.description)
-                }
+                // clean sloppy descriptions
+                var fixedDesc = currentTextTrimmed.replace("+", " + ")
+                fixedDesc = fixedDesc.replace("\\s+".toRegex(), " ")
+                fixedDesc = fixedDesc.replace("Zub.", "Zubehör")
+                fixedDesc = fixedDesc.replace("Sobl.", "Sonnenblende")
+                fixedDesc = fixedDesc.replace("Ta.", "Tasche")
+                fixedDesc = fixedDesc.replace(" f ", " für ")
+                fixedDesc = fixedDesc.capitalizeWords()
+                // finish
+                item?.description = if (item?.description.isNullOrBlank()) fixedDesc else item?.description + " $fixedDesc"
+                item?.targetSystem = TargetSystem.find(item?.description)
             }
         }
 
