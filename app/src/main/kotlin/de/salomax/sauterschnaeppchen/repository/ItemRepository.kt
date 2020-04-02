@@ -110,7 +110,14 @@ class ItemRepository(val context: Context) {
                     prefManager
                         .edit()
                         .putString("pdfLink", link)
-                        .putString("pdfTitle", Uri.parse(link).lastPathSegment?.replace(".pdf", ""))
+                        .putString("pdfTitle", Uri.parse(link).lastPathSegment
+                            ?.replace(".pdf", "")
+                            ?.replace("Second Hand", "")
+                            ?.replace("Liste", "")
+                            ?.replace("Stand", "")
+                            ?.replace("_2", " (v2)")
+                            ?.trim()
+                        )
                         .apply()
                 }
             }
