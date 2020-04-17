@@ -109,6 +109,7 @@ class TextExtractionStrategy : RenderListener {
                 currentTextTrimmed != "verkauf@foto-video-sauter.de" &&
                 currentTextTrimmed != "089 55 15 04 0" &&
                 currentTextTrimmed != "Foto-Video-Sauter  -  Second-Hand-Artikel" &&
+                currentTextTrimmed != "info@foto-video-sauter.de" &&
                 currentTextTrimmed != "*      Mit" &&
                 currentTextTrimmed != "bezeichenete Artikel werden nach  § 25a UStG als Gebrauchtwaren differenzbesteuert." &&
                 currentTextTrimmed != "." &&
