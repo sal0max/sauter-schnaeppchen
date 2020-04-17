@@ -82,6 +82,7 @@ class ItemRepository(val context: Context) {
      * https://www.foto-video-sauter.de/INTERSHOP/static/BOS/Calumet-Site/SauterDE/Calumet-SauterDE/de_DE/pdf/second-hand/schnaeppchen-liste-second-hand-20200211.pdf
      * https://www.foto-video-sauter.de/INTERSHOP/static/BOS/Calumet-Site/SauterDE/Calumet-SauterDE/de_DE/pdf/second-hand/Second%20Hand%20Liste_25.03.2020.pdf
      * https://www.foto-video-sauter.de/INTERSHOP/static/BOS/Calumet-Site/SauterDE/Calumet-SauterDE/de_DE/pdf/second-hand/Second%20Hand%20Liste%20Stand%2031.03.2020_2.pdf
+     * https://www.foto-video-sauter.de/INTERSHOP/static/BOS/Calumet-Site/SauterDE/Calumet-SauterDE/de_DE/pdf/second-hand/Second_Hand_Liste_15_4_2020.pdf
      */
     private fun getPdfLink(result: (String?) -> Unit) {
         OkHttpClient().newCall(
