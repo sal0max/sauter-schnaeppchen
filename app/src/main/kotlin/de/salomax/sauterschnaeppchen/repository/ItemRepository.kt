@@ -83,6 +83,7 @@ class ItemRepository(val context: Context) {
      * https://www.foto-video-sauter.de/INTERSHOP/static/BOS/Calumet-Site/SauterDE/Calumet-SauterDE/de_DE/pdf/second-hand/Second%20Hand%20Liste_25.03.2020.pdf
      * https://www.foto-video-sauter.de/INTERSHOP/static/BOS/Calumet-Site/SauterDE/Calumet-SauterDE/de_DE/pdf/second-hand/Second%20Hand%20Liste%20Stand%2031.03.2020_2.pdf
      * https://www.foto-video-sauter.de/INTERSHOP/static/BOS/Calumet-Site/SauterDE/Calumet-SauterDE/de_DE/pdf/second-hand/Second_Hand_Liste_15_4_2020.pdf
+     * https://www.foto-video-sauter.de/INTERSHOP/static/BOS/Calumet-Site/SauterDE/Calumet-SauterDE/de_DE/pdf/second-hand/Second%20Hand%20Liste%20Stand%20KW20_2020.pdf
      */
     private fun getPdfLink(result: (String?) -> Unit) {
         OkHttpClient().newCall(
@@ -97,7 +98,7 @@ class ItemRepository(val context: Context) {
 
             override fun onResponse(call: Call, response: Response) {
                 val doc = Jsoup.parse(response.body?.byteStream()!!, null, "https://www.foto-video-sauter.de")
-                val link = doc.select("a.btn[target=_blank]").last().attr("abs:href")
+                val link = doc.select("a.btn[href$=.pdf]").last().attr("abs:href")
                 Log.v("sauterschnaeppchen", "Fetched pdf link: $link")
                 if (link.isEmpty()) {
                     liveError.postValue(context.getString(R.string.error_no_pdf))
