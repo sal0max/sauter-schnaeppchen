@@ -64,7 +64,7 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'me.zhanghai.android.fastscroll:library:1.1.1'
     // network
-    implementation 'com.squareup.okhttp3:okhttp:4.4.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.5.0'
     // parse website
     implementation 'org.jsoup:jsoup:1.13.1'
     // parse pdf
