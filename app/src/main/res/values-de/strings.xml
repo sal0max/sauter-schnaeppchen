@@ -3,7 +3,8 @@
     <string name="error_no_pdf">Keine Schnäppchenliste gefunden</string>
     <string name="search_on_google">Auf Google suchen</string>
     <string name="search_the_dslr_forum">Das DSLR-Forum durchsuchen</string>
-    <string name="open_nikon_gebrauchtpreisliste">\"Nikon Gebrauchtpreisliste\" öffnen</string>
+    <string name="open_nikon_gebrauchtpreisliste">Gehe zur \"Nikon Gebrauchtpreisliste\"</string>
+    <string name="open_sauter">Gehe auf \"foto-video-sauter.de/used\"</string>
     <string name="filter_list">Filtern</string>
     <string name="filter_show_all">Alles</string>
     <string name="filter_show_unknown">Sonstiges</string>

@@ -122,6 +122,11 @@ class MainActivity : AppCompatActivity() {
                 ContextCompat.startActivity(this, intent, null)
                 return true
             }
+            R.id.openSauter -> {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.foto-video-sauter.de/used"))
+                ContextCompat.startActivity(this, intent, null)
+                return true
+            }
             R.id.sort_price -> {
                 model.sortByPrice()
             }

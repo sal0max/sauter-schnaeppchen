@@ -7,6 +7,11 @@
         android:title="@string/open_nikon_gebrauchtpreisliste"
         app:showAsAction="never" />
     <item
+        android:id="@+id/openSauter"
+        android:icon="@drawable/ic_open_in_browser_24dp"
+        android:title="@string/open_sauter"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/sortList"
         android:icon="@drawable/ic_sort_24dp"
         android:title="@string/sort_by"
