@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="error_no_pdf">Keine Schnäppchenliste gefunden</string>
+    <string name="error_invalid_pdf">PDF scheint fehlerhaft zu sein. Fehler beim Parsen.</string>
     <string name="search_on_google">Auf Google suchen</string>
     <string name="search_the_dslr_forum">Das DSLR-Forum durchsuchen</string>
     <string name="open_nikon_gebrauchtpreisliste">Gehe zur \"Nikon Gebrauchtpreisliste\"</string>

@@ -2,6 +2,7 @@ package de.salomax.sauterschnaeppchen.repository
 
 import android.app.Application
 import android.content.Context
+import android.net.ParseException
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -53,10 +54,16 @@ class ItemRepository(val context: Context) {
         getPdfLink { url ->
             url?.let {
                 // download and parse pdf only if it is new - check based on filename
-                if (url != prefManager.getString("pdfLink", null)) {
+                if (url == prefManager.getString("pdfLink", null)) {
                     downloadPdf(url) { pdfStream ->
-                        itemDao.deleteAll() // delete the old
-                        itemDao.insertItems(parsePdf(pdfStream!!)) // insert the new
+                        // delete the old
+                        itemDao.deleteAll()
+                        // insert the new
+                        try {
+                            itemDao.insertItems(parsePdf(pdfStream!!))
+                        } catch (e: ParseException) {
+                            liveError.postValue(context.getString(R.string.error_invalid_pdf))
+                        }
                     }
                 } else {
                     Log.v("sauterschnaeppchen", "Pdf hasn't changed: not downloading again.")
