@@ -2,7 +2,6 @@ package de.salomax.sauterschnaeppchen.repository
 
 import android.app.Application
 import android.content.Context
-import android.net.ParseException
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -17,6 +16,7 @@ import okhttp3.*
 import org.jsoup.Jsoup
 import java.io.IOException
 import java.io.InputStream
+import java.lang.Exception
 
 class ItemRepository(val context: Context) {
 
@@ -54,14 +54,14 @@ class ItemRepository(val context: Context) {
         getPdfLink { url ->
             url?.let {
                 // download and parse pdf only if it is new - check based on filename
-                if (url == prefManager.getString("pdfLink", null)) {
+                if (url != prefManager.getString("pdfLink", null)) {
                     downloadPdf(url) { pdfStream ->
                         // delete the old
                         itemDao.deleteAll()
                         // insert the new
                         try {
                             itemDao.insertItems(parsePdf(pdfStream!!))
-                        } catch (e: ParseException) {
+                        } catch (e: Exception) {
                             liveError.postValue(context.getString(R.string.error_invalid_pdf))
                         }
                     }

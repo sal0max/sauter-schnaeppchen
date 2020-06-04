@@ -56,9 +56,17 @@ class MainActivity : AppCompatActivity() {
         model = ViewModelProviders.of(this).get(ItemViewModel::class.java)
         // items
         model.getItems().observe(this, Observer {
-            errorView.visibility = View.GONE
-            recyclerView.visibility = View.VISIBLE
-            (recyclerView.adapter as MyAdapter).setData(it)
+            if (it.isEmpty()) {
+                recyclerView.visibility = View.GONE
+                errorView.apply {
+                    visibility = View.VISIBLE
+                    text = getString(R.string.error_generic)
+                }
+            } else {
+                errorView.visibility = View.GONE
+                recyclerView.visibility = View.VISIBLE
+                (recyclerView.adapter as MyAdapter).setData(it)
+            }
         })
         // error
         model.getError().observe(this, Observer {
