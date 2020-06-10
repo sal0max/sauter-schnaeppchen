@@ -4,13 +4,13 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "de.salomax.sauterschnaeppchen"
         minSdkVersion 26
-        targetSdkVersion 29
+        targetSdkVersion 30
         // SemVer
         def major = 0
         def minor = 1
