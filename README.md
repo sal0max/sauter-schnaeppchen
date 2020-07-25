@@ -1,3 +1,7 @@
+> :warning: *Not working any more – so also no longer maintained. Sauter doesn't use PDFs for used gear any more, but a [webshop](https://www.foto-video-sauter.de/category/fvs/second-hand).*
+
+---
+
 # Sauter Schnaeppchen
 
 An experimental android app, parsing some bad-formed pdf.
